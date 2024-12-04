@@ -1,0 +1,109 @@
+{%extends 'base.html'%}
+
+{%block head%}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+
+{%endblock%}
+
+{%block body%}
+{%with messages = get_flashed_messages() %}
+{% if messages %}
+{% for message in messages %}
+{% if message == "Student record added successfully!"%}
+<div class="message">
+    {{ message }}
+</div>
+{% else %}
+<div class="message" style="background-color: #d03a3a;">
+    {{ message }}
+</div>
+{% endif %}
+{% endfor %}
+{% endif %}
+{%endwith %}
+<div id="err-message" class="err-message" style="background-color: #d03a3a;"></div>
+<div id="err-message2" class="err-message" style="background-color: #d03a3a;"></div>
+<div class="login-container">
+    <div class="login-bg">
+        <img class="login-bg-img" src="{{ url_for('static', filename='images/login-bg.png') }}" alt="">
+    </div>
+    <div class="login-form" value="{{ users }}" id="login-form">
+        <img src="{{ url_for('static', filename='images/PSITS_LOGO2.png') }}" height="150" alt="Logo">
+        <form action="/admin-login" method="POST">
+            <div class="login-form-field">
+                <input required type="text" name="username" id="username">
+                <input type="hidden" id="usernames" value="{{ usernames }}">
+                <label for="username" class="login-preview-label">USERNAME</label>
+            </div>
+            <div class="login-form-field">
+                <input required type="password" name="password" id="password">
+                <input type="hidden" id="passwords" value="{{ passwords }}">
+                <label for="password" class="login-preview-label">PASSWORD</label>
+            </div>
+            <div class="login-form-field">
+                <input class="login-form-submit" name="login" value="LOGIN" type="button" onclick="loginSubmit()">
+            </div>
+        </form>
+    </div>
+
+</div>
+
+<script>
+    function loginSubmit() {
+        var username = document.getElementById("username").value;
+        var password = document.getElementById("password").value;
+        // var usernames = document.getElementById("usernames").value;
+        // var passwords = document.getElementById("passwords").value;
+
+        // console.log(document.getElementById("usernames").value.replace(/'/g, '"'))
+        // console.log(document.getElementById("passwords").value.replace(/'/g, '"'))
+        var usernames = JSON.parse(document.getElementById("usernames").value.replace(/'/g, '"'));
+        var passwords = JSON.parse(document.getElementById("passwords").value.replace(/'/g, '"'));
+
+        if (username === "" || password === "") {
+            if(username === ""){
+                if (password === "") {
+                    document.querySelector('#err-message').innerHTML = "Please Enter Username and Password!";
+                }
+                else {
+                    document.querySelector('#err-message').innerHTML = "Please Enter Username!";
+                }
+            }
+            else {
+                if (password === "") {
+                    document.querySelector('#err-message').innerHTML = "Please Enter Password!";
+                }
+            }
+            document.querySelector('#err-message').style.animation = "hidemessage 2s ease-in";
+            setTimeout(() => {
+                document.querySelector('#err-message').style.animation = "none";
+            }, 1000)
+            return
+        }
+        console.log(username, password, usernames, passwords);
+        for (let i = 0; i < usernames.length; i++) {
+            console.log(usernames[i], passwords[i]);
+            if (usernames[i] == username && passwords[i] == password) {
+                window.location.href = "/list";
+                return
+            } else if (usernames[i] == username) {
+                document.querySelector('#err-message').innerHTML = "Incorrect Password!";
+                document.querySelector('#err-message').style.animation = "hidemessage 2s ease-in-out";
+                setTimeout(() => {
+                    document.querySelector('#err-message').style.animation = "none";
+                }, 1000)
+                return
+            }
+        }
+
+        document.querySelector('#err-message').innerHTML = "Invalid Username and Password!";
+        document.querySelector('#err-message').style.animation = "hidemessage 2s ease-in-out";
+        setTimeout(() => {
+            document.querySelector('#err-message').style.animation = "none";
+        }, 1000)
+        return
+
+    }
+</script>
+
+{%endblock%}

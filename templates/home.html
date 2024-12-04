@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{%block head%}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+    
+
+{%endblock%}
+
+{%block body%}
+<div class="container">
+    <div class="header">
+        <div class="header-box title">
+            <img src="{{ url_for('static', filename='images/PSITS_LOGO2.png') }}" height="60" alt="Logo">
+            <h1 class="header-title">ATTENDANCE CHECKER</h1>
+        </div>
+    </div>
+    <div id="scan-qr" class="content">
+        <h1 class="content-title">Scan Your QR Code</h1>
+        <img id="video-feed" src="{{ url_for('video_feed') }}" height="480" width="640">
+        <h1 id="qr-result"></h1>
+    </div>
+    <div id="student-attendance" class="content" style="display: none;">
+
+            <div class = 'student-info'>
+                <img class="student-info-img" src="{{ url_for('static', filename='images/22655781.jpg') }}" width="250" alt="image">
+                <div class="student-info-box">
+                    <p class="student-info-label">IDNO</p>
+                    <p class="student-info-data">student info</p>
+                </div>
+                <div class="student-info-box">
+                    <p class="student-info-label">LASTNAME</p>
+                    <p class="student-info-data">student lastname</p>
+                </div>
+                <div class="student-info-box">
+                    <p class="student-info-label">FIRSTNAME</p>
+                    <p class="student-info-data">student firstname</p>
+                </div>
+                <div class="student-info-box">
+                    <p class="student-info-label">COURSE</p>
+                    <p class="student-info-data">student course</p>
+                </div>
+                <div class="student-info-box">
+                    <p class="student-info-label">LEVEL</p>
+                    <p class="student-info-data">student level</p>
+                </div>
+            </div>
+    </div>
+
+</div>
+
+<script>
+    var source = new EventSource('/sse');
+
+    source.onmessage = function(event) {
+        var attendanceId = event.data;
+        console.log("Attendance ID: " + attendanceId);
+        if (attendanceId) {
+            var scanQR = document.getElementById("scan-qr");
+            scanQR.style.display = "none";
+
+            var studentAttendance = document.getElementById("student-attendance");
+            studentAttendance.style.display = "flex";
+
+            source.close();
+        }
+    };
+</script>
+
+{%endblock%}

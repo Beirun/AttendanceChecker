@@ -1,0 +1,164 @@
+.login-container {   
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 100vw;
+    height: 100vh;
+}
+
+.login-bg{
+    display: flex;
+    width: 50vw;
+    height: 100vh;
+    background-color: #0066b2;
+    
+}
+
+.login-bg-img{
+    width: 100%;
+    height: 100%;
+    opacity: 35%;
+}
+
+.login-form{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    width: 50vw;
+    height: 100vh;
+}
+
+.login-form img{
+    margin-top: 10vh;
+}
+
+.login-form form{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 10vh;
+    height: 30vh;
+    width: 100%;
+}
+
+.login-form-field input{
+    width: 25vw;
+    height: 6vh;
+    border: #191919 1px solid;
+    background-color: transparent;
+    padding-left: 0.5vw;
+    border-radius: 5px;
+}
+
+
+.login-form-field label{
+    position: absolute;
+    top: 50%;
+    left: 10px;
+    transform: translateY(-50%);
+    pointer-events: none;
+    color: #777777;
+    font-size: 14px;
+    transition: 300ms;
+}
+
+
+.login-form-field input:focus{
+    border: #0066b2 1px solid;
+}
+
+input:focus ~ label, input:valid ~ label{
+    top: 0;
+    left: 5px;
+    transform: translateY(-100%);
+    font-size: 12px;
+}
+
+
+.login-form-field {
+    top: 0 !important;
+    left: 5px !important;
+    transform: translateY(-100%) !important;
+    color: #0066b2 !important;
+    font-size: 14px !important;
+    margin: 2vh;
+}
+
+
+.login-form-field input[type="button"]{
+    margin-left: 1vw;
+    margin-right: 1vw;
+    width: 11.5vw;
+    height: 6vh;
+    border: #191919 1px solid;
+    background-color: transparent;
+    border-radius: 10px;
+}
+.login-form-field input[type="button"]{
+    background-color: #0066b2;
+    color: white;
+    border: #0066b2 1px solid;
+    transition: 300ms;
+    cursor: pointer;
+}
+
+.login-form-field input[type="button"]:hover{
+    color: #0066b2;
+    background-color: white;
+    border: #0066b2 1px solid;
+}
+
+
+
+.message{
+    position: fixed;
+    height: 5vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    background-color: green;
+    width: 20vw;
+    margin-top: 94.5vh;
+    margin-left:80vw;
+    opacity: 0;
+    animation: hidemessage 3s ease-in;
+    animation-iteration-count: 1;
+    
+}
+.err-message{
+    position: fixed;
+    height: 5vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    background-color: #d03a3a;
+    width: 20vw;
+    margin-top: 94.5vh;
+    margin-left:80vw;
+    opacity: 0;   
+}
+
+#err-message2{
+    margin-top: 89vh;
+}
+
+
+@keyframes hidemessage {
+    0%{
+        opacity: 0;
+    }
+    10%{
+        opacity: 1;
+    }
+    90%{
+        opacity: 1;
+    }
+    100%{
+        opacity: 0;
+    }
+}

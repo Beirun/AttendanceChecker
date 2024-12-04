@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{%block head%}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+
+{%endblock%}
+
+{%block body%}
+<div class="container">
+    <div class="header">
+        <div class="header-box title">
+            <img src="{{ url_for('static', filename='images/PSITS_LOGO2.png') }}" height="60" alt="Logo">
+            <h1 class="header-title">STUDENT LIST</h1>
+        </div>
+        <div class="header-box button">
+            <a class="header-button" href="/">HOME</a>
+            <a class="header-button" href="/list">LIST</a>
+        </div>
+    </div>
+<div className="content">
+    <div class="student-list">
+        {% if students %}
+        <table class="w3-table-all" style="border-collapse: separate;">
+            <tr class="sticky-header">
+                <th>IDNO</th>
+                <th>LASTNAME</th>
+                <th>FIRSTNAME</th>
+                <th>COURSE</th>
+                <th>LEVEL</th>
+                <th>IMAGE</th>
+
+            </tr>
+            {% for student in students %}
+            <tr>
+                <td>{{ student.idno }}</td>
+                <td>{{ student.lastname.upper() }}</td>
+                <td>{{ student.firstname.upper() }}</td>
+                <td>{{ student.course }}</td>
+                <td>{{ student.level }}</td>
+                <td> <img src="{{ student.image }}" alt="Image" width="80" height="60"></td>
+                
+            </tr>
+            {% endfor%}
+        </table>
+        {% else %}
+        <p class ="w3-center w3-display-middle w3-xxlarge w3-bold" style="font-weight: 800;">NO STUDENT FOUND</p>
+        {% endif %}
+    </div>
+</div>
+</div>
+<div class=" footer">
+    &copy; copyright 2024 Bernard Jay D. Orillo
+</div>
+{%endblock%}
