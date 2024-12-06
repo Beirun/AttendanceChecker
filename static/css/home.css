@@ -97,3 +97,40 @@
     margin: 0;
 
 }
+
+
+.err-message{
+    position: fixed;
+    height: 5vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    background-color: #d03a3a;
+    width: 20vw;
+    margin-top: 94.5vh;
+    margin-left:80vw;
+    opacity: 0;   
+}
+
+
+@keyframes hidemessage {
+    0%{
+        opacity: 0;
+    }
+    10%{
+        opacity: 1;
+    }
+    25%{
+        opacity: 1;
+    }
+    50%{
+        opacity: 1;
+    }
+    70%{
+        opacity: 1;
+    }
+    100%{
+        opacity: 0;
+    }
+}

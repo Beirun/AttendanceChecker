@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+{%block head%}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/attendance.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/menu.css') }}">
+
+
+{%endblock%}
+
+{%block body%}
+<div class="container">
+    <div class="header">
+        <div class="header-box title">
+            <img src="{{ url_for('static', filename='images/PSITS_LOGO2.png') }}" height="60" alt="Logo">
+            <h1 class="header-title">ATTENDANCE LIST</h1>
+        </div>
+        <div class="header-box button">
+            <div class="icon nav-icon-5">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+            <div id="myDropdown" class="dropdown w3-animate-opacity">
+                <a class="header-button" href="/list">LIST</a>
+                <a class="header-button" href="/attendance">ATTENDANCE</a>
+                <a class="header-button" href="/add">ADD</a>
+                <a class="header-button" href="" onclick="logoutSubmit()">LOGOUT</a>
+            </div>
+        </div>
+    </div>
+<div className="content">
+    <div class="time"></div>
+    <div class="student-list attendance w3-card-4 w3-round-large">
+        {% if attendance %}
+        <table class="w3-table-all" style="border-collapse: separate; table-layout: fixed;">
+            <tr class="sticky-header">
+                <th>IDNO</th>
+                <th>LASTNAME</th>
+                <th>FIRSTNAME</th>
+                <th>COURSE</th>
+                <th>LEVEL</th>
+                <th style="padding-left: 2.5vw;">TIME LOGGED</th>
+
+            </tr>
+            {% for student in attendance %}
+            <tr>
+                <td>{{ student.idno }}</td>
+                <td>{{ student.lastname.upper() }}</td>
+                <td>{{ student.firstname.upper() }}</td>
+                <td>{{ student.course }}</td>
+                <td>{{ student.level }}</td>
+                <td> {{ student.log }}</td>
+                
+            </tr>
+            {% endfor%}
+        </table>
+        {% else %}
+        <p class ="w3-center w3-display-middle w3-xxlarge w3-bold" style="font-weight: 800;">NO ATTENDANCE FOUND</p>
+        {% endif %}
+    </div>
+</div>
+</div>
+<div class=" footer">
+    &copy; copyright 2024 Bernard Jay D. Orillo
+</div>
+
+<script>
+    const icon = document.querySelector('.icon');
+    icon.addEventListener('click', (event) => {
+            icon.classList.toggle("open");
+            document.getElementById("myDropdown").classList.toggle("active");
+        });
+
+    
+    const date = new Date()
+    document.querySelector('.time').innerHTML = date.toLocaleString()
+    setInterval(function () {
+        const date = new Date()
+        document.querySelector('.time').innerHTML = date.toLocaleString()
+    }, 1000)
+
+</script>
+<script>
+    function logoutSubmit() {
+        fetch('/logout', { method: 'POST' });
+    }
+</script>
+
+{%endblock%}

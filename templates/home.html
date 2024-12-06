@@ -1,13 +1,16 @@
 {% extends 'base.html' %}
 
 {%block head%}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
-    
+<link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+
 
 {%endblock%}
 
 {%block body%}
+<div id="err-message" class="err-message" style="background-color: #d03a3a;"></div>
+
 <div class="container">
+    <input type="hidden" id="getstudents-url" value="{{ idnos }}">
     <div class="header">
         <div class="header-box title">
             <img src="{{ url_for('static', filename='images/PSITS_LOGO2.png') }}" height="60" alt="Logo">
@@ -17,53 +20,118 @@
     <div id="scan-qr" class="content">
         <h1 class="content-title">Scan Your QR Code</h1>
         <img id="video-feed" src="{{ url_for('video_feed') }}" height="480" width="640">
-        <h1 id="qr-result"></h1>
+        <div>
+            <!-- The Modal -->
+            <div id="id01" class="w3-modal">
+                <div class="w3-modal-content w3-card-4 w3-display-middle w3-animate-opacity w3-card w3-round-large"
+                    style="transition: 0.3s !important; width:30vw; height: 25vh; ">
+                    <div class="w3-container">
+                        <span onclick="document.getElementById('id01').style.display='none'"
+                            class="w3-button  w3-display-topright w3-round-large">&times;</span>
+
+                        <h1 class="w3-center"> <b> Invalid QR Code</b></h1>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     <div id="student-attendance" class="content" style="display: none;">
 
-            <div class = 'student-info'>
-                <img class="student-info-img" src="{{ url_for('static', filename='images/22655781.jpg') }}" width="250" alt="image">
-                <div class="student-info-box">
-                    <p class="student-info-label">IDNO</p>
-                    <p class="student-info-data">student info</p>
-                </div>
-                <div class="student-info-box">
-                    <p class="student-info-label">LASTNAME</p>
-                    <p class="student-info-data">student lastname</p>
-                </div>
-                <div class="student-info-box">
-                    <p class="student-info-label">FIRSTNAME</p>
-                    <p class="student-info-data">student firstname</p>
-                </div>
-                <div class="student-info-box">
-                    <p class="student-info-label">COURSE</p>
-                    <p class="student-info-data">student course</p>
-                </div>
-                <div class="student-info-box">
-                    <p class="student-info-label">LEVEL</p>
-                    <p class="student-info-data">student level</p>
-                </div>
+        <div class='student-info'>
+            <img id="image" class="student-info-img" width="250" alt="image">
+            <div class="student-info-box">
+                <p class="student-info-label">IDNO</p>
+                <p id="idno" class="student-info-data">student info</p>
             </div>
+            <div class="student-info-box">
+                <p class="student-info-label">LASTNAME</p>
+                <p id="lastname" class="student-info-data">student lastname</p>
+            </div>
+            <div class="student-info-box">
+                <p class="student-info-label">FIRSTNAME</p>
+                <p id="firstname" class="student-info-data">student firstname</p>
+            </div>
+            <div class="student-info-box">
+                <p class="student-info-label">COURSE</p>
+                <p id="course" class="student-info-data">student course</p>
+            </div>
+            <div class="student-info-box">
+                <p class="student-info-label">LEVEL</p>
+                <p id="level" class="student-info-data">student level</p>
+            </div>
+        </div>
     </div>
 
 </div>
 
 <script>
     var source = new EventSource('/sse');
+    
 
-    source.onmessage = function(event) {
+    source.addEventListener('message', async function (event) {
         var attendanceId = event.data;
-        console.log("Attendance ID: " + attendanceId);
         if (attendanceId) {
-            var scanQR = document.getElementById("scan-qr");
-            scanQR.style.display = "none";
+            const idnos = JSON.parse(document.getElementById("getstudents-url").value.replace(/'/g, '"'));
+            console.log("Attendance ID: " + attendanceId);
 
-            var studentAttendance = document.getElementById("student-attendance");
-            studentAttendance.style.display = "flex";
+            if (idnos.includes(attendanceId)) {
 
-            source.close();
+                var scanQR = document.getElementById("scan-qr");
+                scanQR.style.display = "none";
+
+                var studentAttendance = document.getElementById("student-attendance");
+                studentAttendance.style.display = "flex";
+
+                fetch('/getstudentinfo?idno=' + attendanceId)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data)
+                        document.getElementById("idno").innerHTML = data.idno;
+                        document.getElementById("lastname").innerHTML = data.lastname.toUpperCase();
+                        document.getElementById("firstname").innerHTML = data.firstname.toUpperCase();
+                        document.getElementById("course").innerHTML = data.course.toUpperCase();
+                        document.getElementById("level").innerHTML = data.level;
+                        document.getElementById("image").src = data.image;
+
+                        async function submitStudentInfo() {
+                            try {
+                                const response = await fetch('/addAttendance', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify({
+                                        idno: document.getElementById("idno").innerHTML,
+                                        lastname: document.getElementById("lastname").innerHTML,
+                                        firstname: document.getElementById("firstname").innerHTML,
+                                        course: document.getElementById("course").innerHTML,
+                                        level: document.getElementById("level").innerHTML,
+                                        log: new Date().toLocaleString()
+                                    })
+                                });
+                                const status = await response.json();
+                                console.log("status ", status);
+                            } catch (error) {
+                                console.error('Error:', error);
+                            }
+                        }
+                        submitStudentInfo();
+                    });
+                    document.querySelector('#err-message').innerHTML = "Attendance Recorded Successfully!";
+                    document.querySelector('#err-message').style.animation = "hidemessage 2s ease-in";
+                    document.querySelector('#err-message').style.backgroundColor = "green";
+                    setTimeout(() => {
+                        document.querySelector('#err-message').style.animation = "none";
+                        document.querySelector('#err-message').style.backgroundColor = "#d03a3a";
+                    }, 2000)
+                source.close();
+            }
+            else {
+                document.getElementById('id01').style.display = 'block'
+            }
+
         }
-    };
+    });
 </script>
 
 {%endblock%}

@@ -5,6 +5,8 @@ body{
     color: white;
     padding-left: 1vw;
     font-size: clamp(1rem, 2vw, 3rem);
+    font-weight: bold;
+
 }
 .container{
     display: flex;
@@ -21,11 +23,19 @@ body{
     height: 10vh;
 }
 
+.button{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    width: 50vw;
+    height: 10vh;
+}
+
 .header-button{
     background-color: transparent;
-    color: white;
+    color: black;
     border: none;
-    margin-left: 2.5vw;
     font-size: 1.5rem;
     text-decoration: none;
 }
@@ -39,7 +49,7 @@ body{
 }
 .button{
     justify-content: flex-end;
-    padding-right: 10vw;
+    padding-right: 5vw;
 }
 
 .header{
@@ -246,7 +256,7 @@ input:focus ~ label:not(.preview-label), input:valid ~ label:not(.preview-label)
     margin-top: 94.5vh;
     margin-left:80vw;
     opacity: 0;
-    animation: hidemessage 3s ease-in;
+    animation: hidemessage 2s ease-in-out;
     animation-iteration-count: 1;
     
 }

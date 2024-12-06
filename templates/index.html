@@ -1,99 +1,135 @@
 {%extends 'base.html'%}
 
 {%block head%}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/flip.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/menu.css') }}">
 
 {%endblock%}
 
 {%block body%}
 {%with messages = get_flashed_messages() %}
-    {% if messages %}
-        {% for message in messages %}
-            {% if message == "Student record added successfully!"%}
-                <div class="message" >
-                    {{ message }}
-                </div>
-                {% else %}
-                <div class="message" style="background-color: #d03a3a;">
-                    {{ message }}
-                </div>
-                {% endif %}
-            {% endfor %}
-    {% endif %}
+{% if messages %}
+{% for message in messages %}
+{% if message == "Student record added successfully!"%}
+<div class="message">
+    {{ message }}
+</div>
+{% else %}
+<div class="message" style="background-color: #d03a3a;">
+    {{ message }}
+</div>
+{% endif %}
+{% endfor %}
+{% endif %}
 {%endwith %}
 <div id="err-message" class="err-message" style="background-color: #d03a3a;"></div>
 <div id="err-message2" class="err-message" style="background-color: #d03a3a;"></div>
-<div class="content">
-    <div class="student-form">
-        <form action="/save" method="POST">
-            <div class="form-camera-preview">
-                <div id="my_result"></div>
+<div class="container">
+    <div class="header">
+        <div class="header-box title">
+            <img src="{{ url_for('static', filename='images/PSITS_LOGO2.png') }}" height="60" alt="Logo">
+            <h1 class="header-title">STUDENT </h1>
+        </div>
+        <div class="header-box button">
+            <div class="icon nav-icon-5">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+            <div id="myDropdown" class="dropdown w3-animate-opacity">
+                <a class="header-button" href="/list">LIST</a>
+                <a class="header-button" href="/attendance">ATTENDANCE</a>
+                <a class="header-button" href="/add">ADD</a>
+                <a class="header-button" href="" onclick="logoutSubmit()">LOGOUT</a>
             </div>
-            <div class="form-field">
-                <input readonly required type="text" name="idnoentered" id="idnoentered">
-                <label for="idnoentered" class="preview-label">IDNO</label>
-            </div>
-            <div class="form-field">
-                <input readonly required type="text" name="lastnameentered" id="lastnameentered">
-                <label for="lastnameentered" class="preview-label">LASTNAME</label>
-            </div>
-            <div class="form-field">
-                <input readonly required type="text" name="firstnameentered" id="firstnameentered">
-                <label for="firstnameentered"  class="preview-label">FIRSTNAME</label>
-            </div>
-            <div class="form-field">
-                <input readonly required type="text" name="courseentered" id="courseentered">
-                <label for="courseentered" class="preview-label">COURSE</label>
-            </div>
-            <div class="form-field">
-                <input readonly required type="text" name="levelentered" id="levelentered">
-                <label for="levelentered"  class="preview-label">LEVEL</label>
-            </div>
-
-            <div class="form-field">
-                <div class=" form-button">
-                    <input class="form-submit" name="save" value="SAVE" type="submit" onclick="saveImage(document.getElementById('idnoentered').value)">
-                </div>
-            </div>
-        </form>
+        </div>
     </div>
-    <div class="student-form">
-        <form action="" method="POST">
-            <div class="form-camera">
-                <div id="my_camera" style="width:320px; height:240px;"></div>
-            </div>
-            <div class="form-field">
-                <input required type="text" name="idno" id="idno" onkeydown="resetColor(this)">
-                <input type="hidden" id="idnos" value="{{idnos}}">
-                <label for="idno" id="idnolabel">IDNO</label>
-            </div>
-            <div class="form-field">
-                <input required type="text" name="lastname" id="lastname" onkeydown="resetColor(this)">
-                <label for="lastname" id="lastnamelabel">LASTNAME</label>
-            </div>
-            <div class="form-field">
-                <input required type="text" name="firstname" id="firstname" onkeydown="resetColor(this)">
-                <label for="firstname" id="firstnamelabel">FIRSTNAME</label>
-            </div>
-            <div class="form-field">
-                <input required type="text" name="course" id="course" onkeydown="resetColor(this)">
-                <label for="course" id="courselabel">COURSE</label>
-            </div>
-            <div class="form-field">
-                <input required type="text" name="level" id="level" onkeydown="resetColor(this)">
-                <label for="level" id="levellabel">LEVEL</label>
-            </div>
-            <div class="form-field">
-                <div class=" form-button">
-                    <input class="form-submit" name="save" value="SAVE" type="button" onclick="snapCam()">
+    <div class="content">
+        <div class="student-form w3-card-4">
+            <form action="" method="POST">
+                <div class="form-camera">
+                    <div id="my_camera" style="width:320px; height:240px;"></div>
                 </div>
-            </div>
-        </form>
+                <div class="form-field">
+                    <input required type="text" name="idno" id="idno" onkeydown="resetColor(this)">
+                    <input type="hidden" id="idnos" value="{{idnos}}">
+                    <label for="idno" id="idnolabel">IDNO</label>
+                </div>
+                <div class="form-field">
+                    <input required type="text" name="lastname" id="lastname" onkeydown="resetColor(this)">
+                    <label for="lastname" id="lastnamelabel">LASTNAME</label>
+                </div>
+                <div class="form-field">
+                    <input required type="text" name="firstname" id="firstname" onkeydown="resetColor(this)">
+                    <label for="firstname" id="firstnamelabel">FIRSTNAME</label>
+                </div>
+                <div class="form-field">
+                    <input required type="text" name="course" id="course" onkeydown="resetColor(this)">
+                    <label for="course" id="courselabel">COURSE</label>
+                </div>
+                <div class="form-field">
+                    <input required type="text" name="level" id="level" onkeydown="resetColor(this)">
+                    <label for="level" id="levellabel">LEVEL</label>
+                </div>
+                <div class="form-field">
+                    <div class=" form-button">
+                        <input class="form-submit w3-round" name="save" value="SNAP" type="button" onclick="snapCam()">
+                    </div>
+                </div>
+            </form>
 
+        </div>
+        <div class="student-form w3-card-4">
+            <form action="/save" method="POST">
+                <div class="form-camera-preview">
+                    <div id="my_result-qr" class="card--container" style="display: none;">
+                        <div class="card--flipper">
+                            <div class="side--a">
+                                <div id="my_result"></div>
+                            </div>
+                            <div class="side--b">
+
+                                <div id="my_qr"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-field">
+                    <input readonly required type="text" name="idnoentered" id="idnoentered" style="pointer-events: none;">
+                    <label for="idnoentered" class="preview-label">IDNO</label>
+                </div>
+                <div class="form-field">
+                    <input readonly required type="text" name="lastnameentered" id="lastnameentered" style="pointer-events: none;">
+                    <label for="lastnameentered" class="preview-label">LASTNAME</label>
+                </div>
+                <div class="form-field">
+                    <input readonly required type="text" name="firstnameentered" id="firstnameentered" style="pointer-events: none;">
+                    <label for="firstnameentered" class="preview-label">FIRSTNAME</label>
+                </div>
+                <div class="form-field">
+                    <input readonly required type="text" name="courseentered" id="courseentered" style="pointer-events: none;">
+                    <label for="courseentered" class="preview-label">COURSE</label>
+                </div>
+                <div class="form-field">
+                    <input readonly required type="text" name="levelentered" id="levelentered" style="pointer-events: none;">
+                    <label for="levelentered" class="preview-label">LEVEL</label>
+                </div>
+
+                <div class="form-field">
+                    <div class=" form-button">
+                        <input class="form-submit w3-round" name="save" value="SAVE" type="submit"
+                            onclick="saveImage(document.getElementById('idnoentered').value)">
+                    </div>
+                </div>
+            </form>
+        </div>
+        
     </div>
 </div>
 
 <script src="{{url_for('static', filename='js/webcam.js')}}"></script>
+<script src="{{url_for('static', filename='js/qrcode.js')}}"></script>
 <script>
     Webcam.set({
         width: 320,
@@ -109,8 +145,20 @@
     Webcam.attach('#my_camera');
 
 </script>
-
 <script>
+
+    const icon = document.querySelector('.icon');
+    icon.addEventListener('click', (event) => {
+            icon.classList.toggle("open");
+            document.getElementById("myDropdown").classList.toggle("active");
+        });
+
+
+
+    
+    document.querySelector('.card--container').addEventListener('click', (evt) => {
+        evt.currentTarget.classList.toggle('flip')
+    })
     const ids = ["idno", "lastname", "firstname", "course", "level"];
 
 
@@ -121,9 +169,9 @@
         const course = document.getElementById("course").value.trim(' ');
         const level = document.getElementById("level").value.trim(' ');
         const idnos = document.getElementById("idnos").value;
-       
+
         if (idnos.includes(idno) || idno == "" || lastname == "" || firstname == "" || course == "" || level == "") {
-            
+
             if (idno == '' || idnos.includes(idno)) {
                 document.getElementById("idno").style.border = "2px solid red";
                 document.getElementById("idnolabel").style.color = "red";
@@ -146,26 +194,26 @@
             }
             if ((idno == "" || lastname == "" || firstname == "" || course == "" || level == "")) {
                 document.querySelector('#err-message').innerHTML = "Please Fill-in All Fields!";
-                    document.querySelector('#err-message').style.animation = "hidemessage 3s ease-in";
-                    setTimeout(() => {
-                        document.querySelector('#err-message').style.animation = "none";
-                    },3000)
+                document.querySelector('#err-message').style.animation = "hidemessage 2s ease-in-out";
+                setTimeout(() => {
+                    document.querySelector('#err-message').style.animation = "none";
+                }, 2000)
             }
             if (idnos.includes(idno) && idno != '') {
-                    if(document.querySelector('#err-message').innerHTML == "") {
-                        document.querySelector('#err-message').innerHTML = "IDNO Already Exists!";
-                        document.querySelector('#err-message').style.animation = "hidemessage 3s ease-in";
-                        setTimeout(() => {
-                            document.querySelector('#err-message').style.animation = "none";
-                        },3000)
-                    }else{
-                        document.querySelector('#err-message2').innerHTML = "IDNO Already Exists!";
-                        document.querySelector('#err-message2').style.animation = "hidemessage 3s ease-in";
-                        setTimeout(() => {
-                            document.querySelector('#err-message2').style.animation = "none";
-                        },3000)
-                    }
+                if (document.querySelector('#err-message').innerHTML == "") {
+                    document.querySelector('#err-message').innerHTML = "IDNO Already Exists!";
+                    document.querySelector('#err-message').style.animation = "hidemessage 2s ease-in-out";
+                    setTimeout(() => {
+                        document.querySelector('#err-message').style.animation = "none";
+                    }, 2000)
+                } else {
+                    document.querySelector('#err-message2').innerHTML = "IDNO Already Exists!";
+                    document.querySelector('#err-message2').style.animation = "hidemessage 2s ease-in-out";
+                    setTimeout(() => {
+                        document.querySelector('#err-message2').style.animation = "none";
+                    }, 2000)
                 }
+            }
         }
         else if (!idnos.includes(idno)) {
             take_snapshot(idno)
@@ -174,11 +222,33 @@
             document.getElementById("firstnameentered").value = firstname;
             document.getElementById("courseentered").value = course;
             document.getElementById("levelentered").value = level;
+            document.getElementById("my_qr").style.display = "block";
+            document.querySelector('.form-camera-preview').style.border = "none";
+            document.getElementById("my_result-qr").style.display = "block";
+
+            document.getElementById("my_qr").innerHTML = "";
+            var qrCodeElement = document.getElementById("my_qr");
+
+            // Create a new QR code instance
+            var qrcode = new QRCode(qrCodeElement, {
+                text: idno,
+                width: 200,
+                height: 200,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+
+            // Clear the existing QR code
+
+            // Add the new QR code to the HTML element
+            qrcode.makeCode(idno);
+
         }
     }
     function saveImage(idno) {
         const image = document.getElementById('my_image').src;
-        Webcam.upload(image, '/saveimage?idno='+idno, function(code,text){})
+        Webcam.upload(image, '/saveimage?idno=' + idno, function (code, text) { })
     }
     function resetColor(element) {
         element.style.border = "1px solid #191919";
@@ -188,6 +258,11 @@
         Webcam.snap(function (data_uri) {
             document.getElementById('my_result').innerHTML = '<img id="my_image" src="' + data_uri + '"/>';
         });
+    }
+</script>
+<script>
+    function logoutSubmit() {
+        fetch('/logout', { method: 'POST' });
     }
 </script>
 

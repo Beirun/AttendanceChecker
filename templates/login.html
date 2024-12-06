@@ -29,6 +29,7 @@
     </div>
     <div class="login-form" value="{{ users }}" id="login-form">
         <img src="{{ url_for('static', filename='images/PSITS_LOGO2.png') }}" height="150" alt="Logo">
+        <h1 class="login-form-title">ADMIN LOGIN</h1>
         <form action="/admin-login" method="POST">
             <div class="login-form-field">
                 <input required type="text" name="username" id="username">
@@ -44,6 +45,7 @@
                 <input class="login-form-submit" name="login" value="LOGIN" type="button" onclick="loginSubmit()">
             </div>
         </form>
+
     </div>
 
 </div>
@@ -52,16 +54,11 @@
     function loginSubmit() {
         var username = document.getElementById("username").value;
         var password = document.getElementById("password").value;
-        // var usernames = document.getElementById("usernames").value;
-        // var passwords = document.getElementById("passwords").value;
-
-        // console.log(document.getElementById("usernames").value.replace(/'/g, '"'))
-        // console.log(document.getElementById("passwords").value.replace(/'/g, '"'))
         var usernames = JSON.parse(document.getElementById("usernames").value.replace(/'/g, '"'));
         var passwords = JSON.parse(document.getElementById("passwords").value.replace(/'/g, '"'));
 
         if (username === "" || password === "") {
-            if(username === ""){
+            if (username === "") {
                 if (password === "") {
                     document.querySelector('#err-message').innerHTML = "Please Enter Username and Password!";
                 }
@@ -84,7 +81,27 @@
         for (let i = 0; i < usernames.length; i++) {
             console.log(usernames[i], passwords[i]);
             if (usernames[i] == username && passwords[i] == password) {
-                window.location.href = "/list";
+                async function adminLogin() {
+                    try {
+                        const response = await fetch('/admin-login', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                username: username,
+                                password: password
+                            })
+                        });
+                        const data = await response.json();
+                        if (data.redirect_url) {
+                            window.location.href = data.redirect_url;
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                    }
+                }
+                adminLogin();
                 return
             } else if (usernames[i] == username) {
                 document.querySelector('#err-message').innerHTML = "Incorrect Password!";

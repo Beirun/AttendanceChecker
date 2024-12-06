@@ -1,11 +1,31 @@
 {% extends 'base.html' %}
 
 {%block head%}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/menu.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/list.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/flip.css') }}">
 
 {%endblock%}
 
 {%block body%}
+{%with messages = get_flashed_messages() %}
+{% if messages %}
+{% for message in messages %}
+{% if message == "Student record added successfully!"%}
+<div class="message">
+    {{ message }}
+</div>
+{% else %}
+<div class="message" style="background-color: #d03a3a;">
+    {{ message }}
+</div>
+{% endif %}
+{% endfor %}
+{% endif %}
+{%endwith %}
+<div id="err-message" class="err-message" style="background-color: #d03a3a;"></div>
+<div id="err-message2" class="err-message" style="background-color: #d03a3a;"></div>
 <div class="container">
     <div class="header">
         <div class="header-box title">
@@ -13,37 +33,218 @@
             <h1 class="header-title">STUDENT LIST</h1>
         </div>
         <div class="header-box button">
-            <a class="header-button" href="/">HOME</a>
-            <a class="header-button" href="/list">LIST</a>
+            <div class="icon nav-icon-5">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <div id="myDropdown" class="dropdown  w3-animate-opacity">
+                <a class="header-button" href="/list">LIST</a>
+                <a class="header-button" href="/attendance">ATTENDANCE</a>
+                <a class="header-button" href="/add">ADD</a>
+                <a class="header-button" href="" onclick="logoutSubmit()">LOGOUT</a>
+            </div>
         </div>
     </div>
-<div className="content">
-    <div class="student-list">
-        {% if students %}
-        <table class="w3-table-all" style="border-collapse: separate;">
-            <tr class="sticky-header">
-                <th>IDNO</th>
-                <th>LASTNAME</th>
-                <th>FIRSTNAME</th>
-                <th>COURSE</th>
-                <th>LEVEL</th>
-                <th>IMAGE</th>
+    <div className="content">
+        <div class="student-list w3-card-4 w3-round-large">
+            {% if students %}
+            <table class="w3-table-all" style="border-collapse: separate;">
+                <tr class="sticky-header">
+                    <th>IDNO</th>
+                    <th>LASTNAME</th>
+                    <th>FIRSTNAME</th>
+                    <th>COURSE</th>
+                    <th>LEVEL</th>
+                    <th>IMAGE</th>
+                    <th>ACTION</th>
 
-            </tr>
-            {% for student in students %}
-            <tr>
-                <td>{{ student.idno }}</td>
-                <td>{{ student.lastname.upper() }}</td>
-                <td>{{ student.firstname.upper() }}</td>
-                <td>{{ student.course }}</td>
-                <td>{{ student.level }}</td>
-                <td> <img src="{{ student.image }}" alt="Image" width="80" height="60"></td>
-                
-            </tr>
-            {% endfor%}
+                </tr>
+                {% for student in students %}
+                <tr id="{{student.idno}}">
+                    <td id="{{student.idno}}-idno">{{ student.idno }}</td>
+                    <td id="{{student.idno}}-lastname">{{ student.lastname.upper() }}</td>
+                    <td id="{{student.idno}}-firstname">{{ student.firstname.upper() }}</td>
+                    <td id="{{student.idno}}-course">{{ student.course.upper() }}</td>
+                    <td id="{{student.idno}}-level">{{ student.level }}</td>
+                    <td> <img id="{{student.idno}}-image" src="{{ student.image }}" alt="Image" width="80" height="60">
+                    </td>
+                    <td
+                        style="display: flex; flex-direction: row; align-items: center; justify-content: center; margin-left: -6.5vw; margin-top: 1.5vh;">
+                        <button
+                            onclick="editStudent('{{student.idno}}','{{student.lastname}}','{{student.firstname}}','{{student.course}}','{{student.level}}','{{student.image}}')"
+                            class="edit">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-edit">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" />
+                                <path d="M20.385 6.585a2.1 2.1 0 0 0 -2.97 -2.97l-8.415 8.385v3h3l8.385 -8.415z" />
+                                <path d="M16 5l3 3" />
+                            </svg>
+                        </button>
+
+                        <div id="edit-modal" class="w3-modal">
+
+                            <div class="w3-modal-content w3-display-middle student-form w3-card-4"
+                                style="overflow: hidden;">
+                                <span onclick="closeEditModal()"
+                                    class="w3-button w3-display-topright w3-round-xlarge">&times;</span>
+                                <form action="" method="POST">
+                                    <div>
+                                        <div onclick="snapPicture(this)" class="form-edit-pic">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                stroke-linecap="round" stroke-linejoin="round"
+                                                class="icon icon-tabler icons-tabler-outline icon-tabler-pencil">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+                                                <path d="M13.5 6.5l4 4" />
+                                            </svg>
+                                        </div>
+                                        <div onclick="snapCamera()" id="snap-icon" class="form-edit-pic"
+                                            style="display: none;">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                stroke-linecap="round" stroke-linejoin="round"
+                                                class="icon icon-tabler icons-tabler-outline icon-tabler-camera">
+                                                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                                <path
+                                                    d="M5 7h1a2 2 0 0 0 2 -2a1 1 0 0 1 1 -1h6a1 1 0 0 1 1 1a2 2 0 0 0 2 2h1a2 2 0 0 1 2 2v9a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-9a2 2 0 0 1 2 -2" />
+                                                <path d="M9 13a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" />
+                                            </svg>
+                                        </div>
+                                        <div class="form-camera-preview">
+                                            <div id="my_camera" style="width:320px; height:240px; display: none;"></div>
+                                            <div id="my_result-qr" class="card--container" ">
+
+                                                <div class=" card--flipper">
+                                                <div class="side--a">
+                                                    <div id="my_result"><img id="student-image" src="{{student.image}}"
+                                                            alt=""></div>
+                                                </div>
+                                                <div class="side--b">
+
+                                                    <div id="my_qr"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                            </div>
+                            <div class="form-field">
+                                <input onkeydown="resetColor(this)" readonly required type="text"
+                                    value="{{student.idno}}" name="idnoentered" id="idnoentered"
+                                    style="pointer-events: none;">
+                                <label for="idnoentered" class="preview-label">IDNO</label>
+
+                            </div>
+                            <div class="form-field">
+                                <input onkeydown="resetColor(this)" readonly required type="text"
+                                    value="{{student.lastname}}" name="lastnameentered" id="lastnameentered"
+                                    style="pointer-events: none;">
+                                <label for="lastnameentered" id="lastnamelabel" class="preview-label">LASTNAME</label>
+                                <div onclick="edit('lastnameentered',this)" class="form-edit">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        class="icon icon-tabler icons-tabler-outline icon-tabler-pencil">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                        <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+                                        <path d="M13.5 6.5l4 4" />
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="form-field">
+                                <input onkeydown="resetColor(this)" readonly required type="text"
+                                    value="{{student.firstname}}" name="firstnameentered" id="firstnameentered"
+                                    style="pointer-events: none;">
+                                <label for="firstnameentered" id="firstnamelabel"
+                                    class="preview-label">FIRSTNAME</label>
+                                <div onclick="edit('firstnameentered',this)" class="form-edit">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        class="icon icon-tabler icons-tabler-outline icon-tabler-pencil">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                        <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+                                        <path d="M13.5 6.5l4 4" />
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="form-field">
+                                <input onkeydown="resetColor(this)" readonly required type="text"
+                                    value="{{student.course}}" name="courseentered" id="courseentered"
+                                    style="pointer-events: none;">
+                                <label for="courseentered" id="courselabel" class="preview-label">COURSE</label>
+                                <div onclick="edit('courseentered',this)" class="form-edit">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        class="icon icon-tabler icons-tabler-outline icon-tabler-pencil">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                        <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+                                        <path d="M13.5 6.5l4 4" />
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="form-field">
+                                <input onkeydown="resetColor(this)" readonly required type="text"
+                                    value="{{student.level}}" name="levelentered" id="levelentered"
+                                    style="pointer-events: none;">
+                                <label for="levelentered" id="levellabel" class="preview-label">LEVEL</label>
+                                <div onclick="edit('levelentered',this)" class="form-edit">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        class="icon icon-tabler icons-tabler-outline icon-tabler-pencil">
+                                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                                        <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+                                        <path d="M13.5 6.5l4 4" />
+                                    </svg>
+                                </div>
+                            </div>
+
+                            <div class="form-field">
+                                <div class=" form-button">
+                                    <input class="form-submit w3-round" name="save" value="SAVE" type="button"
+                                        onclick="submitEdit()">
+                                    <!-- onclick="submitEdit()" -->
+                                </div>
+                            </div>
+                            </form>
+                        </div>
+        </div>
+
+        <button onclick="openDeleteModal('{{student.idno}}')" class="delete">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="icon icon-tabler icons-tabler-outline icon-tabler-trash">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                <path d="M4 7l16 0" />
+                <path d="M10 11l0 6" />
+                <path d="M14 11l0 6" />
+                <path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" />
+                <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
+            </svg>
+        </button>
+        <div id="delete-modal" class="w3-modal">
+            <div class="delete-content w3-modal-content w3-card-4 w3-animate-opacity w3-round-large">
+                <div class=" w3-container ">
+                    <span onclick="document.getElementById('delete-modal').style.display='none'"
+                        class="w3-button w3-display-topright w3-round-large">&times;</span>
+                    <h1 class="w3-center">Are you sure you want to delete?</h1>
+                    <button onclick="deleteStudent('{{student.idno}}')"
+                        class="delete-button w3-display-bottommiddle w3-center">DELETE</button>
+                </div>
+            </div>
+        </div>
+        </td>
+
+        </tr>
+        {% endfor%}
         </table>
         {% else %}
-        <p class ="w3-center w3-display-middle w3-xxlarge w3-bold" style="font-weight: 800;">NO STUDENT FOUND</p>
+        <p class="w3-center w3-display-middle w3-xxlarge w3-bold" style="font-weight: 800;">NO STUDENT FOUND</p>
         {% endif %}
     </div>
 </div>
@@ -51,4 +252,267 @@
 <div class=" footer">
     &copy; copyright 2024 Bernard Jay D. Orillo
 </div>
+
+
+<script src="{{url_for('static', filename='js/webcam.js')}}"></script>
+<script src="{{url_for('static', filename='js/qrcode.js')}}"></script>
+
+<script>
+
+
+    document.querySelector('.card--container').addEventListener('click', (evt) => {
+        evt.currentTarget.classList.toggle('flip')
+    })
+    const ids = ["idno", "lastname", "firstname", "course", "level"];
+
+
+    async function saveImage(idno) {
+        const image = document.getElementById('my_image').src;
+        await Webcam.upload(image, '/saveimage?idno=' + idno, function (code, text) { })
+    }
+    function resetColor(element) {
+        element.style.border = "1px solid #191919";
+        document.getElementById(element.id.slice(0, element.id.length - 7) + "label").style.color = "#777777";
+    }
+</script>
+
+<script>
+    function logoutSubmit() {
+        fetch('/logout', { method: 'POST' });
+    }
+</script>
+
+<script>
+    let editIdno = ''
+    function edit(id, element) {
+        document.getElementById(id).readOnly = false;
+        document.getElementById(id).focus();
+        document.getElementById(id).style.pointerEvents = 'all';
+        element.style.display = 'none';
+    }
+    let deleteIdno = ''
+    function openDeleteModal(idno) {
+        deleteIdno = idno
+        document.getElementById('delete-modal').style.display = 'block';
+
+    }
+    function editStudent(idno, lastname, firstname, course, level, image) {
+
+
+        editIdno = idno
+        document.getElementById('idnoentered').value = idno;
+        document.getElementById('lastnameentered').value = lastname;
+        document.getElementById('firstnameentered').value = firstname;
+        document.getElementById('courseentered').value = course;
+        document.getElementById('levelentered').value = level;
+        document.getElementById('student-image').src = image;
+        addQrCode(idno);
+        document.querySelector('.form-camera-preview').style.border = "none";
+
+        var student = { 'idno': idno, 'lastname': lastname, 'firstname': firstname, 'course': course, 'level': level, 'image': image };
+        document.getElementById('edit-modal').style.display = 'block';
+        console.log(student)
+
+
+    }
+    function addQrCode(idno) {
+        document.getElementById("my_qr").innerHTML = "";
+        var qrCodeElement = document.getElementById("my_qr");
+
+        // Create a new QR code instance
+        var qrcode = new QRCode(qrCodeElement, {
+            text: idno,
+            width: 200,
+            height: 200,
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H
+        });
+
+        // Clear the existing QR code
+
+        // Add the new QR code to the HTML element
+        qrcode.makeCode(idno);
+
+    }
+    function closeEditModal() {
+        document.getElementById('edit-modal').style.display = 'none';
+
+        document.getElementById('idnoentered').readOnly = true;
+        document.getElementById('lastnameentered').readOnly = true;
+        document.getElementById('firstnameentered').readOnly = true;
+        document.getElementById('courseentered').readOnly = true;
+        document.getElementById('levelentered').readOnly = true;
+        document.getElementById('idnoentered').readOnly = true;
+
+        document.getElementById('idnoentered').style.pointerEvents = 'none';
+        document.getElementById('lastnameentered').style.pointerEvents = 'none';
+        document.getElementById('firstnameentered').style.pointerEvents = 'none';
+        document.getElementById('courseentered').style.pointerEvents = 'none';
+        document.getElementById('levelentered').style.pointerEvents = 'none';
+        document.getElementById('idnoentered').style.pointerEvents = 'none';
+
+        Webcam.reset();
+        document.getElementById('my_result-qr').style.display = 'block';
+        document.getElementById('my_camera').style.display = 'none';
+        editPicIcon.style.display = 'flex';
+        const formedits = document.querySelectorAll(".form-edit");
+        formedits.forEach((formedit) => {
+            formedit.style.display = 'block';
+        });
+
+
+    }
+    function deleteStudent() {
+        console.log(deleteIdno)
+        document.getElementById('delete-modal').style.display = 'none';
+        document.getElementById(deleteIdno).innerHTML = '';
+        fetch('/deletestudent?idno=' + deleteIdno, { method: 'POST' });
+        document.querySelector('#err-message').innerHTML = "Student Record Deleted Successfully!";
+        document.querySelector('#err-message').style.animation = "hidemessage 2s ease-in";
+        document.querySelector('#err-message').style.backgroundColor = "green";
+        setTimeout(() => {
+            document.querySelector('#err-message').style.animation = "none";
+            document.querySelector('#err-message').style.backgroundColor = "#d03a3a";
+        }, 2000)
+    }
+
+
+    async function submitEdit() {
+        let idnos = [];
+
+        await fetch('/getIdnos', { method: 'GET' })
+            .then(response => response.json())
+            .then((data) => {
+                idnos = data
+            });
+        console.log("idnos", idnos)
+        const idno = document.getElementById('idnoentered').value.trim(' ');
+        const lastname = document.getElementById('lastnameentered').value.trim(' ');
+        const firstname = document.getElementById('firstnameentered').value.trim(' ');
+        const course = document.getElementById('courseentered').value.trim(' ');
+        const level = document.getElementById('levelentered').value.trim(' ');
+
+        if (lastname == "" || firstname == "" || course == "" || level == "") {
+
+
+            if (lastname == '') {
+                document.getElementById("lastnameentered").style.border = "2px solid red";
+                document.getElementById("lastnamelabel").style.color = "red";
+            }
+            if (firstname == '') {
+                document.getElementById("firstnameentered").style.border = "2px solid red";
+                document.getElementById("firstnamelabel").style.color = "red";
+            }
+            if (course == '') {
+                document.getElementById("courseentered").style.border = "2px solid red";
+                document.getElementById("courselabel").style.color = "red";
+            }
+            if (level == '') {
+                document.getElementById("levelentered").style.border = "2px solid red";
+                document.getElementById("levellabel").style.color = "red";
+            }
+            if ((lastname == "" || firstname == "" || course == "" || level == "")) {
+                document.querySelector('#err-message').innerHTML = "Please Fill-in All Fields!";
+                document.querySelector('#err-message').style.animation = "hidemessage 3s ease-in";
+                setTimeout(() => {
+                    document.querySelector('#err-message').style.animation = "none";
+                }, 3000)
+            }
+
+
+            return;
+        }
+
+        fetch('/editstudent', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                'previousidno': editIdno,
+                'idno': idno,
+                'lastname': lastname,
+                'firstname': firstname,
+                'course': course,
+                'level': level,
+                'image': "static/images/" + idno + ".jpg"
+            })
+        });
+        saveImage(idno);
+        document.getElementById(editIdno + '-idno').innerHTML = idno;
+        document.getElementById(editIdno + '-lastname').innerHTML = lastname.toUpperCase();
+        document.getElementById(editIdno + '-firstname').innerHTML = firstname.toUpperCase();
+        document.getElementById(editIdno + '-course').innerHTML = course.toUpperCase();
+        document.getElementById(editIdno + '-level').innerHTML = level;
+
+        imagedata ?
+            document.getElementById(editIdno + '-image').src = imagedata :
+            document.getElementById(editIdno + '-image').src = "static/images/" + idno + ".jpg";
+
+        closeEditModal();
+        document.querySelector('#err-message').innerHTML = "Student Record Updated Successfully!";
+        document.querySelector('#err-message').style.animation = "hidemessage 2s ease-in";
+        document.querySelector('#err-message').style.backgroundColor = "green";
+        setTimeout(() => {
+            document.querySelector('#err-message').style.animation = "none";
+            document.querySelector('#err-message').style.backgroundColor = "#d03a3a";
+        }, 2000)
+
+    }
+</script>
+
+<script>
+    let formPreview = document.querySelector('.form-camera-preview');
+    let editPicIcon = ''
+    function enableCam() {
+        Webcam.set({
+            width: 320,
+            height: 240,
+            dest_width: 320,
+            dest_height: 240,
+            image_format: 'jpeg',
+            jpeg_quality: 100,
+            force_flash: false,
+            flip_horiz: true,
+            fps: 45
+        });
+        Webcam.attach('#my_camera');
+    }
+    function snapPicture(element) {
+        document.getElementById('my_camera').style.display = 'block';
+        document.getElementById('my_result-qr').style.display = "none"
+
+        enableCam();
+        editPicIcon = element;
+        element.style.display = 'none';
+        document.getElementById('snap-icon').style.display = 'flex';
+    }
+
+</script>
+
+<script>
+    let imagedata = '';
+    function snapCamera() {
+        Webcam.snap(function (data_uri) {
+            document.getElementById('my_result').innerHTML = '<img id="my_image" src="' + data_uri + '">';
+            imagedata = data_uri;
+            document.getElementById('my_result-qr').style.display = 'block';
+            document.getElementById('my_camera').style.display = 'none';
+            document.getElementById('snap-icon').style.display = 'none';
+            editPicIcon.style.display = 'flex';
+            addQrCode(editIdno);
+        });
+    }
+</script>
+
+
+<script>
+    const icon = document.querySelector('.icon');
+    icon.addEventListener('click', (event) => {
+        icon.classList.toggle("open");
+        document.getElementById("myDropdown").classList.toggle("active");
+    });
+
+</script>
 {%endblock%}

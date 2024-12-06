@@ -1,0 +1,113 @@
+.edit{
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: #0066b2;
+    transition: 300ms;
+    border: transparent 2px solid;
+    padding: 5px 5px 0 5px; 
+    margin-right: .1vw;
+}
+.edit:hover{
+    border: #0066b2 2px solid;
+    border-radius: 5px;
+    filter: brightness(2);    
+}
+
+.delete{
+    margin-left: .1vw;
+    margin-right: .1vw;
+    border: none;
+    padding: 5px 5px 0 5px; 
+    background: none;
+    cursor: pointer;
+    transition: 300ms;
+    color: rgb(196, 38, 38);
+    border: transparent 2px solid;
+}
+
+
+.delete:hover{
+    border: rgb(196, 38, 38) 2px solid;
+    border-radius: 5px;
+    filter: brightness(2);    
+}
+
+.delete-button{
+    margin-left: 1vw;
+    margin-right: 1vw;
+    width: 11.5vw;
+    height: 6vh;
+    border-radius: 10px;
+    background-color: rgb(196, 38, 38);
+    color: white;
+    border: rgb(196, 38, 38) 1px solid;
+    transition: 300ms;
+    cursor: pointer;
+    margin-bottom: 1vh;
+}
+.delete-button:hover{
+    color: rgb(196, 38, 38);
+    background-color: white;
+    border: rgb(196, 38, 38) 1px solid;
+}
+
+.delete-content{
+    height: 20vh;
+    width: 40vw;
+    top: 20vh;
+}
+
+.student-form{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 35vw;
+    height: 85vh;
+    border: #191919 1px solid;
+    border-radius: 30px;
+}
+
+.edit-modal-content{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 77vw;
+    padding-bottom: 2vh;
+    border-radius: 30px;
+    margin-top: -7.5vh;
+}
+.form-edit{
+    position: absolute; 
+    right: 0;
+    top: 0;
+    color: #191919;
+    transition: 300ms;
+    cursor: pointer;
+}
+
+.form-edit:hover{
+    color: #0066b2;
+}
+.form-edit-pic{
+    position: fixed; 
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 1.75vw;
+    height: 1.75vw;
+    top: 37%;
+    left: 82%;
+    color: #191919;
+    transition: 300ms;
+    cursor: pointer;
+    margin-right: 1vw;
+    z-index: 10;
+}
+.form-edit-pic:hover{
+    color: #2897ec;
+    filter: drop-shadow(#f4f4f4 0 0 4px);
+    
+}
