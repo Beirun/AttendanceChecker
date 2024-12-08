@@ -2,8 +2,6 @@ from flask import Flask, render_template, url_for, request, session, redirect, f
 from dbhelper import *
 import cv2
 import time
-import qrcode
-import io
 app = Flask(__name__)
 app.secret_key = 'secret'
 

@@ -41,7 +41,6 @@
     color : #0066b2;
     font-weight: bold;
     font-size: clamp(2rem, 3vw, 4rem);
-    margin-top: 5vh;
 }
 
 .my_camera{
@@ -111,6 +110,16 @@
     margin-top: 94.5vh;
     margin-left:80vw;
     opacity: 0;   
+}
+.footer{
+    height: 2.5vh;
+    position: fixed ;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #191919;
+    bottom: 1px;
 }
 
 

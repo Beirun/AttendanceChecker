@@ -121,6 +121,17 @@ input:focus ~ label, input:valid ~ label{
     border: #0066b2 1px solid;
 }
 
+.footer{
+    height: 2.5vh;
+    position: fixed ;
+    width: 35vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #191919;
+    bottom: 1px;
+    right: 8%
+}
 
 
 .message{
